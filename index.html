@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博幼圖書館管理系統</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 新增書籍表單樣式 */
+        .form-help {
+            display: block;
+            margin-top: 5px;
+            color: #718096;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        
+        .form-help i {
+            margin-right: 5px;
+            color: #667eea;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        
+        .form-group label i {
+            color: #667eea;
+            width: 16px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group input:invalid {
+            border-color: #f56565;
+        }
+        
+        .field-error {
+            color: #f56565;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .field-error::before {
+            content: "⚠️";
+            font-size: 0.7rem;
+        }
+        
+        /* 模態框標題樣式 */
+        .modal-content h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #4a5568;
+            margin-bottom: 25px;
+        }
+        
+        .modal-content h2 i {
+            color: #667eea;
+        }
+        
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 標題區域 -->
+        <header class="header">
+            <h1><i class="fas fa-book"></i> 博幼圖書館管理系統</h1>
+            <div class="user-info">
+                <span id="current-user">訪客</span>
+                <button id="login-btn" class="btn btn-outline">登入</button>
+                <button id="logout-btn" class="btn btn-outline" style="display: none;">登出</button>
+            </div>
+        </header>
+
+        <!-- 控制面板 -->
+        <div class="control-panel">
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="搜尋書名、書碼、年份、類別...">
+                    <button id="search-btn" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="filter-section">
+                    <select id="genre-filter">
+                        <option value="">全部類別</option>
+                        <option value="繪本">繪本 (A)</option>
+                        <option value="橋梁書">橋梁書 (B)</option>
+                        <option value="文字書">文字書 (C)</option>
+                    </select>
+                    <div class="genre-legend">
+                        <span class="legend-item">
+                            <span class="legend-color" style="background: #ff6b6b;"></span>
+                            繪本 (A)
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-color" style="background: #f39c12;"></span>
+                            橋梁書 (B)
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-color" style="background: #9b59b6;"></span>
+                            文字書 (C)
+                        </span>
+                    </div>
+                    <select id="sort-by">
+                        <option value="title">按書名排序</option>
+                        <option value="year">按年份排序</option>
+                        <option value="genre">按類別排序</option>
+                    </select>
+                    <select id="sort-order">
+                        <option value="asc">升冪</option>
+                        <option value="desc">降冪</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="admin-section">
+                <button id="boyou-books-btn" class="btn btn-primary">
+                    <i class="fas fa-book-reader"></i> 博幼藏書
+                </button>
+                <button id="import-btn" class="btn btn-success">
+                    <i class="fas fa-file-import"></i> 匯入 Excel 書單
+                </button>
+                <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display: none;">
+                <button id="add-book-btn" class="btn btn-info">
+                    <i class="fas fa-plus"></i> 新增館藏
+                </button>
+                <button id="reload-csv-btn" class="btn btn-secondary">
+                    <i class="fas fa-sync"></i> 重新載入 CSV
+                </button>
+                <button id="toggle-auto-update-btn" class="btn btn-success">
+                    <i class="fas fa-sync-alt"></i> 自動更新
+                </button>
+                <button id="reset-btn" class="btn btn-warning">
+                    <i class="fas fa-trash"></i> 重置資料
+                </button>
+            </div>
+        </div>
+
+        <!-- 統計資訊 -->
+        <div class="stats-panel">
+            <div class="stat-item">
+                <span class="stat-number" id="total-books">0</span>
+                <span class="stat-label">總館藏</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="unique-titles">0</span>
+                <span class="stat-label">不重複書名</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="available-books">0</span>
+                <span class="stat-label">可借閱</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="borrowed-books">0</span>
+                <span class="stat-label">已借出</span>
+            </div>
+        </div>
+
+
+        <!-- 更新狀態 -->
+        <div class="update-status-panel">
+            <div class="update-info">
+                <span id="last-update-time">最後更新：從未更新</span>
+                <span id="auto-update-status" class="status-indicator">
+                    <i class="fas fa-circle"></i> 自動更新已啟動
+                </span>
+            </div>
+        </div>
+
+        <!-- 書籍列表 -->
+        <div class="books-section">
+            <div class="books-header">
+                <h2>館藏清單</h2>
+                <div class="view-controls">
+                    <button id="grid-view" class="view-btn active">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button id="list-view" class="view-btn">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="books-container" class="books-grid">
+                <!-- 書籍卡片將在這裡動態生成 -->
+            </div>
+        </div>
+
+        <!-- 借閱記錄 -->
+        <div class="borrowed-section">
+            <h2>借閱記錄</h2>
+            <div id="borrowed-container" class="borrowed-list">
+                <!-- 借閱記錄將在這裡動態生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 登入模態框 -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>登入系統</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">使用者名稱：</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-role">角色：</label>
+                    <select id="user-role" required>
+                        <option value="guest">訪客</option>
+                        <option value="student">學生</option>
+                        <option value="staff">老師/館員</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">登入</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 新增書籍模態框 -->
+    <div id="add-book-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-plus-circle"></i> 新增館藏</h2>
+            <form id="add-book-form">
+                <div class="form-group">
+                    <label for="book-id">
+                        <i class="fas fa-barcode"></i> 書碼：
+                    </label>
+                    <input type="text" id="book-id" placeholder="例：C0001" required>
+                    <small class="form-help">
+                        <i class="fas fa-info-circle"></i> 
+                        書碼首字母決定類別：A=繪本, B=橋梁書, C=文字書
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="book-title">
+                        <i class="fas fa-book"></i> 書名：
+                    </label>
+                    <input type="text" id="book-title" placeholder="請輸入完整書名" required>
+                </div>
+                <div class="form-group">
+                    <label for="book-year">
+                        <i class="fas fa-calendar"></i> 出版年份：
+                    </label>
+                    <input type="number" id="book-year" min="1900" max="2030" value="2024">
+                </div>
+                <div class="form-group">
+                    <label for="book-copies">
+                        <i class="fas fa-copy"></i> 冊數：
+                    </label>
+                    <input type="number" id="book-copies" min="1" value="1">
+                    <small class="form-help">
+                        <i class="fas fa-info-circle"></i> 
+                        同一本書的複本數量
+                    </small>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="this.closest('.modal').style.display='none'">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> 新增書籍
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 設定模態框 -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>系統設定</h2>
+            <form id="settings-form">
+                <div class="form-group">
+                    <label for="loan-days">借閱天數：</label>
+                    <select id="loan-days">
+                        <option value="7">7天</option>
+                        <option value="14" selected>14天</option>
+                        <option value="21">21天</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="guest-borrow">訪客可借閱：</label>
+                    <input type="checkbox" id="guest-borrow">
+                </div>
+                <div class="form-group">
+                    <label for="default-copies">預設冊數：</label>
+                    <input type="number" id="default-copies" min="1" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="default-year">預設年份：</label>
+                    <input type="number" id="default-year" min="1900" max="2030" value="2024">
+                </div>
+                <button type="submit" class="btn btn-primary">儲存設定</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div id="toast" class="toast"></div>
+
+    <!-- 載入外部函式庫 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
