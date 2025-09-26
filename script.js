@@ -40,6 +40,7 @@ class LibrarySystem {
         document.getElementById('search-btn').addEventListener('click', () => this.renderBooks());
 
         // 管理功能
+        document.getElementById('boyou-books-btn').addEventListener('click', () => this.goToBoyouBooks());
         document.getElementById('import-btn').addEventListener('click', () => {
             document.getElementById('file-input').click();
         });
@@ -884,19 +885,18 @@ class LibrarySystem {
         const borrowDate = new Date(record.borrowDate);
         const dueDate = new Date(record.dueDate);
         const now = new Date();
-        const isOverdue = now > dueDate;
         const daysLeft = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
 
         return `
-            <div class="borrowed-item ${isOverdue ? 'overdue' : ''}">
+            <div class="borrowed-item">
                 <div class="borrowed-info">
                     <div class="borrowed-title">${record.bookTitle}</div>
                     <div class="borrowed-details">
                         <div><i class="fas fa-user"></i> 借閱者：${record.userId}</div>
                         <div><i class="fas fa-calendar-plus"></i> 借閱日期：${borrowDate.toLocaleDateString()}</div>
                         <div><i class="fas fa-calendar-check"></i> 應還日期：${dueDate.toLocaleDateString()}</div>
-                        <div class="${isOverdue ? 'text-danger' : ''}">
-                            <i class="fas fa-clock"></i> ${isOverdue ? '⚠️ 已逾期' : `剩餘 ${daysLeft} 天`}
+                        <div>
+                            <i class="fas fa-clock"></i> 剩餘 ${daysLeft} 天
                         </div>
                     </div>
                 </div>
@@ -915,18 +915,11 @@ class LibrarySystem {
         const uniqueTitles = this.books.length;
         const availableBooks = this.books.reduce((sum, book) => sum + book.availableCopies, 0);
         const borrowedBooks = this.borrowedBooks.filter(b => !b.returnedAt).length;
-        
-        const now = new Date();
-        const overdueBooks = this.borrowedBooks.filter(b => {
-            if (b.returnedAt) return false;
-            return new Date(b.dueDate) < now;
-        }).length;
 
         document.getElementById('total-books').textContent = totalBooks;
         document.getElementById('unique-titles').textContent = uniqueTitles;
         document.getElementById('available-books').textContent = availableBooks;
         document.getElementById('borrowed-books').textContent = borrowedBooks;
-        document.getElementById('overdue-books').textContent = overdueBooks;
     }
 
     // 設定視圖模式
@@ -1087,6 +1080,11 @@ class LibrarySystem {
                 }
             }
         }
+    }
+
+    // 跳轉到博幼藏書頁面
+    goToBoyouBooks() {
+        window.location.href = 'boyou-books.html';
     }
 
     // 顯示通知

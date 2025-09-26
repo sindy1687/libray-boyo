@@ -436,10 +436,6 @@ body {
     border-color: #f56565;
 }
 
-.book-card.overdue {
-    border-color: #ed8936;
-    background: linear-gradient(135deg, #fff5f5, #fed7d7);
-}
 
 .book-header {
     display: flex;
@@ -571,10 +567,6 @@ body {
     gap: 15px;
 }
 
-.borrowed-item.overdue {
-    border-left-color: #f56565;
-    background: linear-gradient(135deg, #fff5f5, #fed7d7);
-}
 
 .borrowed-info {
     flex: 1;
