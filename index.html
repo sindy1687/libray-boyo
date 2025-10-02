@@ -161,6 +161,9 @@
                 <button id="boyou-books-btn" class="btn btn-primary">
                     <i class="fas fa-book-reader"></i> 博幼藏書
                 </button>
+                <button id="location-map-btn" class="btn btn-info">
+                    <i class="fas fa-map"></i> 位置圖
+                </button>
                 <button id="import-btn" class="btn btn-success">
                     <i class="fas fa-file-import"></i> 匯入 Excel 書單
                 </button>
@@ -262,6 +265,17 @@
                 </div>
                 <button type="submit" class="btn btn-primary">登入</button>
             </form>
+        </div>
+    </div>
+
+    <!-- 位置圖模態框 -->
+    <div id="location-map-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-map-marked-alt"></i> 博幼館藏位置圖</h2>
+            <div style="text-align:center">
+                <img id="location-map-img" src="BOYO館藏.jpg" alt="博幼館藏位置圖" style="max-width:100%;height:auto;border-radius:8px;" />
+            </div>
         </div>
     </div>
 
