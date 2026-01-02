@@ -1536,21 +1536,21 @@
             "橋梁書": [
                 {
                     "編號": 27,
-                    "書名": "可能小學歷史任務：秦朝有個歪鼻子將軍",
-                    "書箱": "1",
+                    "書名": "神奇樹屋(1)恐龍谷大冒險",
+                    "書箱": "5",
                     "數量": 5,
-                    "備註": "",
+                    "備註": "神奇樹屋系列",
                     "類別": "橋梁書",
-                    "位置": "書箱1"
+                    "位置": "書箱5"
                 },
                 {
-                    "編號": 2,
-                    "書名": "可能小學歷史任務：跟著馬祖遊明朝",
-                    "書箱": "1",
+                    "編號": 28,
+                    "書名": "神奇樹屋(2)黑暗城堡的秘密",
+                    "書箱": "5",
                     "數量": 5,
-                    "備註": "",
+                    "備註": "神奇樹屋系列",
                     "類別": "橋梁書",
-                    "位置": "書箱1"
+                    "位置": "書箱5"
                 },
                 {
                     "編號": 3,
@@ -3341,6 +3341,7 @@
             renderRoaldDahl();
             renderEthnicBooks();
             setupSearchListeners();
+            persistBoyouBooksData();
         }
 
         // 整理所有書籍資料
@@ -3355,6 +3356,14 @@
                 });
             });
             filteredBooks = [...allBooks];
+        }
+
+        function persistBoyouBooksData() {
+            try {
+                localStorage.setItem('lib_boyou_books_v1', JSON.stringify(boyouBooksData));
+            } catch (e) {
+                console.error('persistBoyouBooksData error:', e);
+            }
         }
 
         // 設定搜尋事件監聽器
@@ -3667,6 +3676,7 @@
 
         // 頁面載入完成後初始化
         document.addEventListener('DOMContentLoaded', function() {
+            persistBoyouBooksData();
             initBoyouBooks();
             initMapClick();
             initModalClick();

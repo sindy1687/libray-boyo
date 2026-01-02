@@ -164,6 +164,9 @@
                 <button id="location-map-btn" class="btn btn-info">
                     <i class="fas fa-map"></i> 位置圖
                 </button>
+                <button id="google-sync-btn" class="btn btn-success">
+                    <i class="fas fa-cloud-upload-alt"></i> Google Sheets 同步
+                </button>
                 <button id="import-btn" class="btn btn-success">
                     <i class="fas fa-file-import"></i> 匯入 Excel 書單
                 </button>
@@ -329,6 +332,57 @@
         </div>
     </div>
 
+    <!-- 編輯書籍模態框 -->
+    <div id="edit-book-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-pen"></i> 編輯書籍</h2>
+            <form id="edit-book-form">
+                <input type="hidden" id="edit-book-original-id">
+                <div class="form-group">
+                    <label for="edit-book-id">
+                        <i class="fas fa-barcode"></i> 書碼：
+                    </label>
+                    <input type="text" id="edit-book-id" disabled>
+                    <small class="form-help">
+                        <i class="fas fa-info-circle"></i>
+                        書碼與借閱紀錄關聯，為避免錯亂暫不提供修改。
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="edit-book-title">
+                        <i class="fas fa-book"></i> 書名：
+                    </label>
+                    <input type="text" id="edit-book-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-book-year">
+                        <i class="fas fa-calendar"></i> 出版年份：
+                    </label>
+                    <input type="number" id="edit-book-year" min="1900" max="2030" value="2024">
+                </div>
+                <div class="form-group">
+                    <label for="edit-book-copies">
+                        <i class="fas fa-copy"></i> 冊數：
+                    </label>
+                    <input type="number" id="edit-book-copies" min="1" value="1">
+                    <small class="form-help">
+                        <i class="fas fa-info-circle"></i>
+                        冊數不得小於目前已借出的數量。
+                    </small>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="this.closest('.modal').style.display='none'">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 儲存變更
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- 設定模態框 -->
     <div id="settings-modal" class="modal">
         <div class="modal-content">
@@ -356,6 +410,32 @@
                     <input type="number" id="default-year" min="1900" max="2030" value="2024">
                 </div>
                 <button type="submit" class="btn btn-primary">儲存設定</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Google Sheets 同步模態框 -->
+    <div id="google-sync-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Google Sheets 同步</h2>
+            <form id="google-sync-form">
+                <div class="form-group">
+                    <label for="google-webapp-url">Apps Script Web App URL：</label>
+                    <input type="url" id="google-webapp-url" placeholder="https://script.google.com/macros/s/.../exec" required>
+                    <small class="form-help">
+                        <i class="fas fa-info-circle"></i>
+                        需先部署 Google Apps Script 成 Web App，並允許存取。此功能會同步：館藏、博幼藏書、借閱資料。
+                    </small>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="google-pull-btn" class="btn btn-info">
+                        <i class="fas fa-cloud-download-alt"></i> 從線上下載
+                    </button>
+                    <button type="button" id="google-push-btn" class="btn btn-success">
+                        <i class="fas fa-cloud-upload-alt"></i> 上傳到線上
+                    </button>
+                </div>
             </form>
         </div>
     </div>
