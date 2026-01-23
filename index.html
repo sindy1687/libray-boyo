@@ -164,6 +164,9 @@
                 <button id="location-map-btn" class="btn btn-info">
                     <i class="fas fa-map"></i> 位置圖
                 </button>
+                <button id="settings-btn" class="btn btn-info">
+                    <i class="fas fa-cog"></i> 系統設定
+                </button>
                 <button id="google-sync-btn" class="btn btn-success">
                     <i class="fas fa-cloud-upload-alt"></i> Google Sheets 同步
                 </button>
@@ -220,28 +223,37 @@
         <!-- 書籍列表 -->
         <div class="books-section">
             <div class="books-header">
-                <h2>館藏清單</h2>
+                <h2><i class="fas fa-book"></i> 館藏列表</h2>
                 <div class="view-controls">
-                    <button id="grid-view" class="view-btn active">
+                    <button id="grid-view" class="view-btn active" title="網格視圖">
                         <i class="fas fa-th"></i>
                     </button>
-                    <button id="list-view" class="view-btn">
+                    <button id="list-view" class="view-btn" title="列表視圖">
                         <i class="fas fa-list"></i>
                     </button>
                 </div>
             </div>
             <div id="books-container" class="books-grid">
-                <!-- 書籍卡片將在這裡動態生成 -->
+                <!-- 書籍將在這裡動態生成 -->
             </div>
         </div>
 
+        <button id="borrowed-fab" class="borrowed-fab" type="button" aria-label="借閱紀錄">
+            <i class="fas fa-list"></i>
+        </button>
+
         <!-- 借閱記錄 -->
         <div class="borrowed-section">
-            <h2>借閱記錄
-                <button id="export-borrowed-btn" class="btn btn-success" style="margin-left: 10px;">
-                    <i class="fas fa-file-excel"></i> 匯出 Excel
+            <div class="borrowed-header" role="button" tabindex="0" aria-label="切換借閱記錄顯示">
+                <h2>借閱記錄
+                    <button id="export-borrowed-btn" class="btn btn-success" style="margin-left: 10px;">
+                        <i class="fas fa-file-excel"></i> 匯出 Excel
+                    </button>
+                </h2>
+                <button id="borrowed-toggle-btn" class="borrowed-toggle-btn" type="button" aria-label="展開/收合借閱記錄">
+                    <i class="fas fa-chevron-up"></i>
                 </button>
-            </h2>
+            </div>
             <div id="borrowed-container" class="borrowed-list">
                 <!-- 借閱記錄將在這裡動態生成 -->
             </div>
@@ -289,6 +301,20 @@
             <h2><i class="fas fa-plus-circle"></i> 新增館藏</h2>
             <form id="add-book-form">
                 <div class="form-group">
+                    <label for="book-prefix">
+                        <i class="fas fa-tags"></i> 類別：
+                    </label>
+                    <select id="book-prefix" required>
+                        <option value="A">A（繪本）</option>
+                        <option value="B">B（橋梁書）</option>
+                        <option value="C" selected>C（文字書）</option>
+                    </select>
+                    <small class="form-help">
+                        <i class="fas fa-info-circle"></i>
+                        選擇類別後會自動生成下一個可用書碼
+                    </small>
+                </div>
+                <div class="form-group">
                     <label for="book-id">
                         <i class="fas fa-barcode"></i> 書碼：
                     </label>
@@ -303,6 +329,12 @@
                         <i class="fas fa-book"></i> 書名：
                     </label>
                     <input type="text" id="book-title" placeholder="請輸入完整書名" required>
+                </div>
+                <div class="form-group">
+                    <label for="book-author">
+                        <i class="fas fa-user-pen"></i> 作者：
+                    </label>
+                    <input type="text" id="book-author" placeholder="可留空"> 
                 </div>
                 <div class="form-group">
                     <label for="book-year">
@@ -323,6 +355,9 @@
                 <div class="form-actions">
                     <button type="button" class="btn btn-outline" onclick="this.closest('.modal').style.display='none'">
                         <i class="fas fa-times"></i> 取消
+                    </button>
+                    <button type="button" id="auto-fill-add-book-btn" class="btn btn-info">
+                        <i class="fas fa-magnifying-glass"></i> 自動搜尋
                     </button>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-plus"></i> 新增書籍
@@ -356,6 +391,12 @@
                     <input type="text" id="edit-book-title" required>
                 </div>
                 <div class="form-group">
+                    <label for="edit-book-author">
+                        <i class="fas fa-user-pen"></i> 作者：
+                    </label>
+                    <input type="text" id="edit-book-author" placeholder="可留空">
+                </div>
+                <div class="form-group">
                     <label for="edit-book-year">
                         <i class="fas fa-calendar"></i> 出版年份：
                     </label>
@@ -375,6 +416,9 @@
                     <button type="button" class="btn btn-outline" onclick="this.closest('.modal').style.display='none'">
                         <i class="fas fa-times"></i> 取消
                     </button>
+                    <button type="button" id="auto-fill-edit-book-btn" class="btn btn-info">
+                        <i class="fas fa-magnifying-glass"></i> 自動搜尋
+                    </button>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> 儲存變更
                     </button>
@@ -391,11 +435,7 @@
             <form id="settings-form">
                 <div class="form-group">
                     <label for="loan-days">借閱天數：</label>
-                    <select id="loan-days">
-                        <option value="7">7天</option>
-                        <option value="14" selected>14天</option>
-                        <option value="21">21天</option>
-                    </select>
+                    <input type="number" id="loan-days" min="1" value="14">
                 </div>
                 <div class="form-group">
                     <label for="guest-borrow">訪客可借閱：</label>

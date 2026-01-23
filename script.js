@@ -12,6 +12,7 @@ class LibrarySystem {
         this.autoSyncCooldownUntil = 0;
         this.autoSyncMinIntervalMs = 30000;
         this.autoSyncDebounceMs = 1500;
+        this.pushNowInFlight = false;
         this.settings = {
             loanDays: 14,
             guestBorrow: false,
@@ -30,6 +31,7 @@ class LibrarySystem {
     init() {
         this.loadData();
         this.setupEventListeners();
+        this.syncBorrowedPanelForViewport();
         // 自動從 Google Sheets 載入線上資料（若已設定同步網址）
         this.startAutoPull();
         this.renderBooks();
@@ -54,6 +56,7 @@ class LibrarySystem {
         const isAdmin = this.isAdminUser();
         const ids = [
             'google-sync-btn',
+            'settings-btn',
             'import-btn',
             'add-book-btn',
             'reload-csv-btn',
@@ -75,6 +78,21 @@ class LibrarySystem {
         if (fileInput) {
             fileInput.style.display = isAdmin ? '' : 'none';
             fileInput.disabled = !isAdmin;
+        }
+    }
+
+    async pushToGoogleSheetsNow() {
+        const url = this.getGoogleWebAppUrl();
+        if (!url) return;
+        if (this.pushNowInFlight) return;
+
+        this.pushNowInFlight = true;
+        try {
+            await this.pushToGoogleSheets({ silent: true });
+        } catch (e) {
+            console.error('pushToGoogleSheetsNow error:', e);
+        } finally {
+            this.pushNowInFlight = false;
         }
     }
 
@@ -142,6 +160,8 @@ class LibrarySystem {
         document.getElementById('import-btn').addEventListener('click', () => {
             document.getElementById('file-input').click();
         });
+        const settingsBtn = document.getElementById('settings-btn');
+        if (settingsBtn) settingsBtn.addEventListener('click', () => this.showSettingsModal());
         document.getElementById('google-sync-btn').addEventListener('click', () => this.showGoogleSyncModal());
         document.getElementById('file-input').addEventListener('change', (e) => this.importBooks(e));
         document.getElementById('add-book-btn').addEventListener('click', () => this.showAddBookModal());
@@ -160,9 +180,29 @@ class LibrarySystem {
         // 表單提交
         document.getElementById('login-form').addEventListener('submit', (e) => this.handleLogin(e));
         document.getElementById('add-book-form').addEventListener('submit', (e) => this.handleAddBook(e));
+        const settingsForm = document.getElementById('settings-form');
+        if (settingsForm) settingsForm.addEventListener('submit', (e) => this.handleSaveSettings(e));
         const editBookForm = document.getElementById('edit-book-form');
         if (editBookForm) {
             editBookForm.addEventListener('submit', (e) => this.handleEditBook(e));
+        }
+
+        const autoFillAddBtn = document.getElementById('auto-fill-add-book-btn');
+        if (autoFillAddBtn) {
+            autoFillAddBtn.addEventListener('click', () => this.autoFillBookInfo({
+                titleInputId: 'book-title',
+                authorInputId: 'book-author',
+                yearInputId: 'book-year'
+            }));
+        }
+
+        const autoFillEditBtn = document.getElementById('auto-fill-edit-book-btn');
+        if (autoFillEditBtn) {
+            autoFillEditBtn.addEventListener('click', () => this.autoFillBookInfo({
+                titleInputId: 'edit-book-title',
+                authorInputId: 'edit-book-author',
+                yearInputId: 'edit-book-year'
+            }));
         }
 
         // 視圖切換
@@ -170,13 +210,90 @@ class LibrarySystem {
         document.getElementById('list-view').addEventListener('click', () => this.setView('list'));
 
         // 匯出借閱清單
-        document.getElementById('export-borrowed-btn').addEventListener('click', () => this.exportBorrowedToExcel());
+        const exportBorrowedBtn = document.getElementById('export-borrowed-btn');
+        if (exportBorrowedBtn) {
+            exportBorrowedBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.exportBorrowedToExcel();
+            });
+        }
+
+        const borrowedHeader = document.querySelector('.borrowed-header');
+        if (borrowedHeader) {
+            borrowedHeader.addEventListener('click', () => this.toggleBorrowedPanel());
+            borrowedHeader.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.toggleBorrowedPanel();
+                }
+            });
+        }
+
+        const borrowedToggleBtn = document.getElementById('borrowed-toggle-btn');
+        if (borrowedToggleBtn) {
+            borrowedToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleBorrowedPanel();
+            });
+        }
+
+        const borrowedFab = document.getElementById('borrowed-fab');
+        if (borrowedFab) {
+            borrowedFab.addEventListener('click', () => this.toggleBorrowedPanel());
+        }
 
         // Google Sheets 同步
         const googlePullBtn = document.getElementById('google-pull-btn');
         const googlePushBtn = document.getElementById('google-push-btn');
         if (googlePullBtn) googlePullBtn.addEventListener('click', () => this.pullFromGoogleSheets());
         if (googlePushBtn) googlePushBtn.addEventListener('click', () => this.pushToGoogleSheets());
+
+        window.addEventListener('resize', () => this.syncBorrowedPanelForViewport());
+    }
+
+    syncBorrowedPanelForViewport() {
+        const panel = document.querySelector('.borrowed-section');
+        if (!panel) return;
+
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            if (!panel.classList.contains('open') && !panel.classList.contains('minimized')) {
+                panel.classList.add('minimized');
+            }
+        } else {
+            if (!panel.classList.contains('open') && !panel.classList.contains('minimized')) {
+                panel.classList.add('open');
+            }
+        }
+
+        this.updateBorrowedToggleIcon();
+    }
+
+    toggleBorrowedPanel() {
+        const panel = document.querySelector('.borrowed-section');
+        if (!panel) return;
+
+        const willOpen = !panel.classList.contains('open');
+        if (willOpen) {
+            panel.classList.add('open');
+            panel.classList.remove('minimized');
+        } else {
+            panel.classList.remove('open');
+            panel.classList.add('minimized');
+        }
+
+        this.updateBorrowedToggleIcon();
+    }
+
+    updateBorrowedToggleIcon() {
+        const icon = document.querySelector('#borrowed-toggle-btn i');
+        if (!icon) return;
+
+        const panel = document.querySelector('.borrowed-section');
+        if (!panel) return;
+
+        const isOpen = panel.classList.contains('open');
+        icon.className = isOpen ? 'fas fa-chevron-down' : 'fas fa-chevron-up';
     }
 
     // 設定模態框事件
@@ -234,6 +351,46 @@ class LibrarySystem {
         if (modal) {
             modal.style.display = 'block';
         }
+    }
+
+    showSettingsModal() {
+        if (!this.requireAdmin('系統設定')) return;
+
+        const modal = document.getElementById('settings-modal');
+        const loanDays = document.getElementById('loan-days');
+        const guestBorrow = document.getElementById('guest-borrow');
+        const defaultCopies = document.getElementById('default-copies');
+        const defaultYear = document.getElementById('default-year');
+
+        if (loanDays) loanDays.value = String(this.settings.loanDays ?? 14);
+        if (guestBorrow) guestBorrow.checked = !!this.settings.guestBorrow;
+        if (defaultCopies) defaultCopies.value = String(this.settings.defaultCopies ?? 1);
+        if (defaultYear) defaultYear.value = String(this.settings.defaultYear ?? 2024);
+
+        if (modal) modal.style.display = 'block';
+    }
+
+    handleSaveSettings(e) {
+        e.preventDefault();
+        if (!this.requireAdmin('儲存設定')) return;
+
+        let loanDays = parseInt(document.getElementById('loan-days')?.value, 10);
+        if (!Number.isFinite(loanDays) || loanDays < 1) loanDays = 14;
+        const guestBorrow = !!document.getElementById('guest-borrow')?.checked;
+        const defaultCopies = parseInt(document.getElementById('default-copies')?.value) || 1;
+        const defaultYear = parseInt(document.getElementById('default-year')?.value) || 2024;
+
+        this.settings.loanDays = loanDays;
+        this.settings.guestBorrow = guestBorrow;
+        this.settings.defaultCopies = defaultCopies;
+        this.settings.defaultYear = defaultYear;
+
+        this.saveData();
+        this.renderBooks();
+
+        const modal = document.getElementById('settings-modal');
+        if (modal) modal.style.display = 'none';
+        this.showToast('設定已儲存', 'success');
     }
 
     getGoogleWebAppUrlFromUI() {
@@ -593,10 +750,18 @@ class LibrarySystem {
         // 重新設定預設值（因為reset會清空）
         document.getElementById('book-year').value = this.settings.defaultYear;
         document.getElementById('book-copies').value = this.settings.defaultCopies;
+        const authorInput = document.getElementById('book-author');
+        if (authorInput) authorInput.value = '';
 
         // 預填下一個書碼（仍可手動修改）
         const suggestedId = this.suggestNextBookId();
         const bookIdInput = document.getElementById('book-id');
+        const bookPrefixSelect = document.getElementById('book-prefix');
+
+        if (bookPrefixSelect) {
+            const m = String(suggestedId || '').toUpperCase().match(/^([ABC])/);
+            bookPrefixSelect.value = m ? m[1] : 'C';
+        }
         if (bookIdInput && suggestedId) {
             bookIdInput.value = suggestedId;
         }
@@ -636,16 +801,7 @@ class LibrarySystem {
             }
         });
 
-        let maxNum = 0;
-        used.forEach(id => {
-            const m = String(id).match(/^([ABC])(\d+)$/);
-            if (!m) return;
-            if (m[1] !== prefix) return;
-            const n = parseInt(m[2], 10);
-            if (!Number.isNaN(n)) maxNum = Math.max(maxNum, n);
-        });
-
-        let next = maxNum + 1;
+        let next = 1;
         while (true) {
             const candidate = `${prefix}${String(next).padStart(4, '0')}`;
             if (!used.has(candidate)) return candidate;
@@ -653,74 +809,146 @@ class LibrarySystem {
         }
     }
 
+    hasBookId(id) {
+        const target = String(id || '').trim().toUpperCase();
+        if (!target) return false;
+
+        return this.books.some(book => {
+            if (!book) return false;
+            if (String(book.id || '').toUpperCase() === target) return true;
+            if (Array.isArray(book.bookIds) && book.bookIds.some(x => String(x || '').toUpperCase() === target)) return true;
+            return false;
+        });
+    }
+
     // 處理新增書籍
     handleAddBook(e) {
         e.preventDefault();
-        const id = document.getElementById('book-id').value.trim();
-        const title = document.getElementById('book-title').value.trim();
-        const year = parseInt(document.getElementById('book-year').value) || this.settings.defaultYear;
-        const copies = parseInt(document.getElementById('book-copies').value) || this.settings.defaultCopies;
 
-        // 驗證書碼格式（支援全形和半形字符）
-        if (!/^[ABC]\d+$/.test(id)) {
-            this.showToast('書碼首字母需為 A/B/C', 'error');
-            return;
+        try {
+            const idEl = document.getElementById('book-id');
+            const titleEl = document.getElementById('book-title');
+            const authorEl = document.getElementById('book-author');
+            const yearEl = document.getElementById('book-year');
+            const copiesEl = document.getElementById('book-copies');
+
+            if (!idEl || !titleEl || !yearEl || !copiesEl) {
+                this.showToast('新增失敗：表單欄位不存在，請重新整理頁面', 'error');
+                return;
+            }
+
+            const id = idEl.value.trim().toUpperCase();
+            const title = titleEl.value.trim();
+            const author = (authorEl?.value || '').trim();
+            const year = parseInt(yearEl.value) || this.settings.defaultYear;
+            const copies = parseInt(copiesEl.value) || this.settings.defaultCopies;
+
+            // 驗證書碼格式（支援全形和半形字符）
+            if (!/^[ABC]\d+$/.test(id)) {
+                this.showToast('書碼格式錯誤：請用 A/B/C + 數字（例：C0001）', 'error');
+                return;
+            }
+
+            // 檢查重複書碼
+            if (this.hasBookId(id)) {
+                this.showToast('書碼已存在', 'error');
+                return;
+            }
+
+            if (!title) {
+                this.showToast('請輸入書名', 'error');
+                return;
+            }
+
+            const genre = this.getGenreFromId(id);
+            const newBook = {
+                id,
+                title,
+                author,
+                genre,
+                year,
+                copies,
+                availableCopies: copies
+            };
+
+            this.books.push(newBook);
+            this.saveData();
+            // 新增館藏後也自動同步到 Google Sheets
+            this.scheduleAutoSync();
+            this.pushToGoogleSheetsNow();
+            this.renderBooks();
+            this.updateStats();
+
+            const modal = document.getElementById('add-book-modal');
+            if (modal) modal.style.display = 'none';
+            const form = document.getElementById('add-book-form');
+            if (form) form.reset();
+
+            this.showToast('書籍新增成功！', 'success');
+        } catch (err) {
+            console.error('handleAddBook error:', err);
+            this.showToast(`新增失敗：${err?.message || err}`, 'error');
         }
-
-        // 檢查重複書碼
-        if (this.books.find(book => book.id === id)) {
-            this.showToast('書碼已存在', 'error');
-            return;
-        }
-
-        if (!title) {
-            this.showToast('請輸入書名', 'error');
-            return;
-        }
-
-        const genre = this.getGenreFromId(id);
-        const newBook = {
-            id,
-            title,
-            genre,
-            year,
-            copies,
-            availableCopies: copies
-        };
-
-        this.books.push(newBook);
-        this.saveData();
-        // 新增館藏後也自動同步到 Google Sheets
-        this.scheduleAutoSync();
-        this.renderBooks();
-        this.updateStats();
-        
-        document.getElementById('add-book-modal').style.display = 'none';
-        document.getElementById('add-book-form').reset();
-        this.showToast('書籍新增成功！', 'success');
     }
 
     // 設定新增書籍表單的實時驗證
     setupAddBookValidation() {
         const bookIdInput = document.getElementById('book-id');
         const bookTitleInput = document.getElementById('book-title');
+        const bookPrefixSelect = document.getElementById('book-prefix');
+
+        if (!bookIdInput || !bookTitleInput) return;
+
+        if (bookPrefixSelect && !bookPrefixSelect.dataset.bound) {
+            bookPrefixSelect.dataset.bound = '1';
+            bookPrefixSelect.addEventListener('change', (e) => {
+                const prefix = String(e.target.value || '').toUpperCase();
+                if (!/^[ABC]$/.test(prefix)) return;
+                const generated = this.generateNextBookId(prefix);
+                if (bookIdInput) bookIdInput.value = generated;
+                if (bookIdInput) bookIdInput.dispatchEvent(new Event('input'));
+            });
+        }
         
         // 書碼格式驗證
-        bookIdInput.addEventListener('input', (e) => {
+        if (!bookIdInput.dataset.bound) {
+            bookIdInput.dataset.bound = '1';
+            bookIdInput.addEventListener('input', (e) => {
             const value = e.target.value.trim();
-            const isValid = /^[ABC]\d*$/.test(value);
+            const upper = value.toUpperCase();
+
+            if (/^[ABC]$/.test(upper)) {
+                const generated = this.generateNextBookId(upper);
+                e.target.value = generated;
+            }
+
+            if (bookPrefixSelect) {
+                const m = String(e.target.value || '').toUpperCase().match(/^([ABC])/);
+                if (m) bookPrefixSelect.value = m[1];
+            }
+
+            const currentValue = e.target.value.trim().toUpperCase();
+            const isValid = /^[ABC]\d+$/.test(currentValue);
             
-            if (value && !isValid) {
+            if (currentValue && !isValid) {
                 e.target.style.borderColor = '#f56565';
                 this.showFieldError('book-id', '書碼格式：A/B/C + 數字');
             } else {
                 e.target.style.borderColor = '#e2e8f0';
                 this.hideFieldError('book-id');
             }
-        });
+
+            if (/^[ABC]\d+$/.test(currentValue) && this.hasBookId(currentValue)) {
+                e.target.style.borderColor = '#f56565';
+                this.showFieldError('book-id', '書碼已存在');
+            }
+            });
+        }
         
         // 書名驗證
-        bookTitleInput.addEventListener('input', (e) => {
+        if (!bookTitleInput.dataset.bound) {
+            bookTitleInput.dataset.bound = '1';
+            bookTitleInput.addEventListener('input', (e) => {
             const value = e.target.value.trim();
             
             if (value.length === 0) {
@@ -730,7 +958,8 @@ class LibrarySystem {
                 e.target.style.borderColor = '#e2e8f0';
                 this.hideFieldError('book-title');
             }
-        });
+            });
+        }
     }
 
     // 顯示欄位錯誤提示
@@ -961,13 +1190,12 @@ class LibrarySystem {
             return;
         }
 
-        // 檢查是否已借閱此書
-        const existingBorrow = this.borrowedBooks.find(
+        // 允許同一使用者借多本（若館藏有多本），但最多不超過該書總冊數
+        const userBorrowedCount = this.borrowedBooks.filter(
             b => b.bookId === bookId && b.userId === this.currentUser.username && !b.returnedAt
-        );
-
-        if (existingBorrow) {
-            this.showToast('您已借閱此書籍', 'error');
+        ).length;
+        if (userBorrowedCount >= (book.copies || 1)) {
+            this.showToast('您已借滿此書所有冊數', 'error');
             return;
         }
 
@@ -990,6 +1218,7 @@ class LibrarySystem {
         this.saveData();
         // 所有使用者：只要借閱成功就自動上傳到 Google Sheets
         this.scheduleAutoSync();
+        this.pushToGoogleSheetsNow();
         this.renderBooks();
         this.renderBorrowedBooks();
         this.updateStats();
@@ -1019,6 +1248,7 @@ class LibrarySystem {
         this.saveData();
         // 所有使用者：只要歸還成功也自動上傳到 Google Sheets
         this.scheduleAutoSync();
+        this.pushToGoogleSheetsNow();
         this.renderBooks();
         this.renderBorrowedBooks();
         this.updateStats();
@@ -1030,13 +1260,14 @@ class LibrarySystem {
         console.log('開始渲染書籍，當前書籍數量:', this.books.length);
         const container = document.getElementById('books-container');
         const rawSearchTerm = document.getElementById('search-input').value;
-        const searchTerm = rawSearchTerm.toLowerCase();
+        const normalizedSearchTerm = (rawSearchTerm || '').trim();
+        const searchTerm = normalizedSearchTerm.toLowerCase();
         const genreFilter = document.getElementById('genre-filter').value;
         const sortBy = document.getElementById('sort-by').value;
         const sortOrder = document.getElementById('sort-order').value;
 
         // 書碼精準搜尋：支援多個書碼（逗號/空白分隔）
-        const codeTokens = (rawSearchTerm || '')
+        const codeTokens = (normalizedSearchTerm || '')
             .toUpperCase()
             .split(/[\s,，]+/)
             .map(s => s.trim())
@@ -1056,11 +1287,12 @@ class LibrarySystem {
                 matchesSearch = codeTokens.some(code => code === mainId || allIds.includes(code));
             } else {
                 matchesSearch =
-                    book.title.toLowerCase().includes(searchTerm) ||
+                    String(book.title || '').toLowerCase().includes(searchTerm) ||
+                    String(book.author || '').toLowerCase().includes(searchTerm) ||
                     String(book.id || '').toLowerCase().includes(searchTerm) ||
                     (book.bookIds && book.bookIds.some(id => String(id || '').toLowerCase().includes(searchTerm))) ||
-                    book.year.toString().includes(searchTerm) ||
-                    String(book.genre || '').includes(searchTerm);
+                    String(book.year ?? '').toLowerCase().includes(searchTerm) ||
+                    String(book.genre || '').toLowerCase().includes(searchTerm);
             }
             
             const matchesGenre = !genreFilter || book.genre === genreFilter;
@@ -1127,9 +1359,9 @@ class LibrarySystem {
             (this.currentUser.role !== 'guest' || this.settings.guestBorrow) &&
             book.availableCopies > 0;
 
-        const isBorrowed = this.borrowedBooks.some(
+        const userBorrowedCount = this.borrowedBooks.filter(
             b => b.bookId === book.id && b.userId === this.currentUser?.username && !b.returnedAt
-        );
+        ).length;
 
         // 顯示書碼資訊
         const bookIdsDisplay = book.bookIds && book.bookIds.length > 1 
@@ -1145,6 +1377,7 @@ class LibrarySystem {
                     <span class="book-genre">${book.genre}</span>
                 </div>
                 <div class="book-title">${book.title}</div>
+                ${book.author ? `<div class="book-info-item"><i class=\"fas fa-pen-nib\"></i><span>${book.author}</span></div>` : ''}
                 <div class="book-info">
                     <div class="book-info-item">
                         <i class="fas fa-calendar"></i>
@@ -1162,12 +1395,12 @@ class LibrarySystem {
                     ` : ''}
                 </div>
                 <div class="book-actions">
-                    ${canBorrow && !isBorrowed ? 
+                    ${canBorrow ? 
                         `<button class="btn btn-primary btn-small" onclick="library.borrowBook('${book.id}')">
-                            <i class="fas fa-book-reader"></i> 借閱
+                            <i class="fas fa-book-reader"></i> ${userBorrowedCount > 0 ? '再借' : '借閱'}
                         </button>` : 
                         `<button class="btn btn-outline btn-small" disabled>
-                            <i class="fas fa-ban"></i> ${isBorrowed ? '已借閱' : '無法借閱'}
+                            <i class="fas fa-ban"></i> 無法借閱
                         </button>`
                     }
                     ${canManageBooks ? `
@@ -1196,12 +1429,14 @@ class LibrarySystem {
         const originalIdInput = document.getElementById('edit-book-original-id');
         const idInput = document.getElementById('edit-book-id');
         const titleInput = document.getElementById('edit-book-title');
+        const authorInput = document.getElementById('edit-book-author');
         const yearInput = document.getElementById('edit-book-year');
         const copiesInput = document.getElementById('edit-book-copies');
 
         if (originalIdInput) originalIdInput.value = book.id;
         if (idInput) idInput.value = book.id;
         if (titleInput) titleInput.value = book.title || '';
+        if (authorInput) authorInput.value = book.author || '';
         if (yearInput) yearInput.value = book.year || this.settings.defaultYear;
         if (copiesInput) copiesInput.value = book.copies || 1;
 
@@ -1214,6 +1449,7 @@ class LibrarySystem {
 
         const originalId = (document.getElementById('edit-book-original-id')?.value || '').trim();
         const title = (document.getElementById('edit-book-title')?.value || '').trim();
+        const author = (document.getElementById('edit-book-author')?.value || '').trim();
         const year = parseInt(document.getElementById('edit-book-year')?.value) || this.settings.defaultYear;
         const newCopies = parseInt(document.getElementById('edit-book-copies')?.value) || 1;
 
@@ -1239,6 +1475,7 @@ class LibrarySystem {
         }
 
         book.title = title;
+        book.author = author;
         book.year = year;
         book.copies = newCopies;
         book.availableCopies = newCopies - borrowedCount;
@@ -1254,6 +1491,51 @@ class LibrarySystem {
         const modal = document.getElementById('edit-book-modal');
         if (modal) modal.style.display = 'none';
         this.showToast('書籍已更新', 'success');
+    }
+
+    async autoFillBookInfo({ titleInputId, authorInputId, yearInputId }) {
+        const titleInput = document.getElementById(titleInputId);
+        const authorInput = document.getElementById(authorInputId);
+        const yearInput = document.getElementById(yearInputId);
+
+        const title = (titleInput?.value || '').trim();
+        const author = (authorInput?.value || '').trim();
+
+        if (!title && !author) {
+            this.showToast('請先輸入書名或作者再搜尋', 'warning');
+            return;
+        }
+
+        try {
+            const q = [];
+            if (title) q.push(`intitle:${title}`);
+            if (author) q.push(`inauthor:${author}`);
+            const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q.join('+'))}&maxResults=5`;
+
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            const item = data?.items?.[0];
+            const info = item?.volumeInfo;
+            if (!info) {
+                this.showToast('找不到符合的書籍資料', 'warning');
+                return;
+            }
+
+            const foundTitle = (info.title || '').trim();
+            const foundAuthors = Array.isArray(info.authors) ? info.authors.join('、') : '';
+            const published = (info.publishedDate || '').trim();
+            const year = published ? parseInt(published.slice(0, 4), 10) : NaN;
+
+            if (titleInput && foundTitle && !titleInput.value.trim()) titleInput.value = foundTitle;
+            if (authorInput && foundAuthors) authorInput.value = foundAuthors;
+            if (yearInput && Number.isFinite(year)) yearInput.value = String(year);
+
+            this.showToast('已自動回填書籍資訊', 'success');
+        } catch (err) {
+            console.error('autoFillBookInfo error:', err);
+            this.showToast('自動搜尋失敗，請檢查網路或稍後再試', 'error');
+        }
     }
 
     deleteBook(bookId) {
