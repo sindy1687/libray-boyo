@@ -147,6 +147,7 @@
                     </div>
                     <select id="sort-by">
                         <option value="title">按書名排序</option>
+                        <option value="code">按書碼排序</option>
                         <option value="year">按年份排序</option>
                         <option value="genre">按類別排序</option>
                     </select>
@@ -170,12 +171,18 @@
                 <button id="google-sync-btn" class="btn btn-success">
                     <i class="fas fa-cloud-upload-alt"></i> Google Sheets 同步
                 </button>
+                <button id="google-load-btn" class="btn btn-info">
+                    <i class="fas fa-cloud-download-alt"></i> 從 Google Sheets 載入
+                </button>
                 <button id="import-btn" class="btn btn-success">
                     <i class="fas fa-file-import"></i> 匯入 Excel 書單
                 </button>
                 <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display: none;">
                 <button id="add-book-btn" class="btn btn-info">
                     <i class="fas fa-plus"></i> 新增館藏
+                </button>
+                <button id="fetch-all-covers-btn" class="btn btn-warning">
+                    <i class="fas fa-images"></i> 一鍵搜尋封面
                 </button>
                 <button id="reload-csv-btn" class="btn btn-secondary">
                     <i class="fas fa-sync"></i> 重新載入 CSV
@@ -337,6 +344,12 @@
                     <input type="text" id="book-author" placeholder="可留空"> 
                 </div>
                 <div class="form-group">
+                    <label for="book-cover-url">
+                        <i class="fas fa-image"></i> 封面網址：
+                    </label>
+                    <input type="url" id="book-cover-url" placeholder="可留空">
+                </div>
+                <div class="form-group">
                     <label for="book-year">
                         <i class="fas fa-calendar"></i> 出版年份：
                     </label>
@@ -388,13 +401,24 @@
                     <label for="edit-book-title">
                         <i class="fas fa-book"></i> 書名：
                     </label>
-                    <input type="text" id="edit-book-title" required>
+                    <div class="input-with-button">
+                        <input type="text" id="edit-book-title" required>
+                        <button type="button" class="btn btn-info btn-small" id="edit-book-search-btn" onclick="library.searchBookInfoFromEdit()">
+                            <i class="fas fa-search"></i> 搜尋
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="edit-book-author">
                         <i class="fas fa-user-pen"></i> 作者：
                     </label>
                     <input type="text" id="edit-book-author" placeholder="可留空">
+                </div>
+                <div class="form-group">
+                    <label for="edit-book-cover-url">
+                        <i class="fas fa-image"></i> 封面網址：
+                    </label>
+                    <input type="url" id="edit-book-cover-url" placeholder="可留空">
                 </div>
                 <div class="form-group">
                     <label for="edit-book-year">
@@ -477,6 +501,107 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- 一鍵搜尋封面模態框 -->
+    <div id="fetch-covers-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-images"></i> 一鍵搜尋封面</h2>
+            <form id="fetch-covers-form">
+                <div class="form-group">
+                    <label for="fetch-range">
+                        <i class="fas fa-filter"></i> 搜尋範圍：
+                    </label>
+                    <select id="fetch-range" required>
+                        <option value="all">全部書籍</option>
+                        <option value="range">指定範圍</option>
+                        <option value="genre">按類別</option>
+                    </select>
+                </div>
+                
+                <div id="range-options" style="display: none;">
+                    <div class="form-group">
+                        <label for="range-start">
+                            <i class="fas fa-play"></i> 起始書碼：
+                        </label>
+                        <input type="text" id="range-start" placeholder="例：A0001">
+                    </div>
+                    <div class="form-group">
+                        <label for="range-end">
+                            <i class="fas fa-stop"></i> 結束書碼：
+                        </label>
+                        <input type="text" id="range-end" placeholder="例：A0100">
+                    </div>
+                </div>
+                
+                <div id="genre-options" style="display: none;">
+                    <div class="form-group">
+                        <label for="fetch-genre">
+                            <i class="fas fa-tags"></i> 類別：
+                        </label>
+                        <select id="fetch-genre">
+                            <option value="繪本">繪本 (A)</option>
+                            <option value="橋梁書">橋梁書 (B)</option>
+                            <option value="文字書">文字書 (C)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fetch-type">
+                        <i class="fas fa-search"></i> 搜尋類型：
+                    </label>
+                    <div style="display: flex; gap: 15px;">
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="checkbox" id="fetch-covers" checked>
+                            <span>搜尋封面</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="checkbox" id="fetch-authors" checked>
+                            <span>搜尋作者</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="this.closest('.modal').style.display='none'">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> 開始搜尋
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 搜尋進度模態框 -->
+    <div id="search-progress-modal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-spinner fa-spin"></i> 搜尋進度</h2>
+            <div class="progress-container">
+                <div class="progress-info">
+                    <div>目前處理：<span id="current-book-title">-</span></div>
+                    <div>進度：<span id="progress-count">0</span> / <span id="progress-total">0</span></div>
+                    <div>成功：<span id="success-count">0</span> | 失敗：<span id="fail-count">0</span></div>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div class="progress-controls">
+                    <button id="pause-search-btn" class="btn btn-warning">
+                        <i class="fas fa-pause"></i> 暫停
+                    </button>
+                    <button id="resume-search-btn" class="btn btn-success" style="display: none;">
+                        <i class="fas fa-play"></i> 繼續
+                    </button>
+                    <button id="stop-search-btn" class="btn btn-danger">
+                        <i class="fas fa-stop"></i> 停止
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

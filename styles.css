@@ -186,6 +186,9 @@ body {
 /* 合併書籍樣式 */
 .book-card.merged {
     border: 2px dashed #667eea;
+}
+
+.book-card.merged .book-content {
     background: linear-gradient(135deg, #f8f9ff, #ffffff);
 }
 
@@ -386,17 +389,63 @@ body {
 .book-card {
     background: white;
     border-radius: 12px;
-    padding: 20px;
+    padding: 0;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
     border: 2px solid transparent;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.book-cover {
+    width: 100%;
+    height: 280px; /* 增加高度以容納完整封面 */
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.book-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* 改為contain確保完整顯示 */
+    transition: transform 0.3s ease;
+    background: #f8f9fa; /* 添加背景色 */
+}
+
+.book-card:hover .book-cover-img {
+    transform: scale(1.05);
+}
+
+.book-cover-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f8f9ff, #ffffff);
+    color: #667eea;
+    font-size: 3rem;
+}
+
+.book-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 /* 類別顏色分類 */
 .book-card.genre-繪本 {
     border-left: 5px solid #ff6b6b;
+}
+
+.book-card.genre-繪本 .book-content {
     background: linear-gradient(135deg, #fff5f5, #ffffff);
 }
 
@@ -407,6 +456,9 @@ body {
 
 .book-card.genre-橋梁書 {
     border-left: 5px solid #f39c12;
+}
+
+.book-card.genre-橋梁書 .book-content {
     background: linear-gradient(135deg, #fef9e7, #ffffff);
 }
 
@@ -417,6 +469,9 @@ body {
 
 .book-card.genre-文字書 {
     border-left: 5px solid #9b59b6;
+}
+
+.book-card.genre-文字書 .book-content {
     background: linear-gradient(135deg, #f4ecf7, #ffffff);
 }
 
@@ -721,6 +776,33 @@ body {
     font-size: 0.85rem;
 }
 
+.form-group s.form-help {
+    display: block;
+    margin-top: 5px;
+    color: #667eea;
+    font-size: 0.8rem;
+}
+
+/* 輸入框與按鈕組合樣式 */
+.input-with-button {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.input-with-button input {
+    flex: 1;
+    margin: 0;
+}
+
+.input-with-button .btn-small {
+    flex-shrink: 0;
+    height: 38px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
 /* Toast 通知 */
 .toast {
     position: fixed;
@@ -750,6 +832,30 @@ body {
 
 .toast.warning {
     background: #ed8936;
+}
+
+/* 書籍列表視圖 */
+.books-list .book-card {
+    display: flex;
+    flex-direction: row;
+    height: auto;
+}
+
+.books-list .book-cover {
+    width: 120px;
+    height: 180px; /* 增加高度以容納完整封面 */
+    flex-shrink: 0;
+}
+
+.books-list .book-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.books-list .book-actions {
+    margin-top: auto;
 }
 
 /* 響應式設計 */
@@ -782,6 +888,19 @@ body {
     
     .books-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .book-cover {
+        height: 200px; /* 行動裝置上稍微降低高度 */
+    }
+    
+    .books-list .book-card {
+        flex-direction: column;
+    }
+    
+    .books-list .book-cover {
+        width: 100%;
+        height: 200px; /* 行動裝置上稍微降低高度 */
     }
 
     .borrowed-section {
@@ -892,6 +1011,454 @@ body {
 .borrowed-item,
 .stat-item {
     animation: fadeIn 0.5s ease;
+}
+
+/* 搜尋進度樣式 */
+.progress-container {
+    padding: 20px 0;
+}
+
+.progress-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.progress-info div {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.progress-info span {
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 10px;
+}
+
+.progress-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.progress-controls .btn {
+    min-width: 100px;
+}
+
+/* 書籍搜尋結果樣式 */
+.search-results {
+    max-height: 500px;
+    overflow-y: auto;
+    margin: 20px 0;
+}
+
+.search-result-item {
+    display: flex;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.search-result-item:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.search-result-cover {
+    width: 80px;
+    height: 120px;
+    margin-right: 15px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.search-result-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.search-result-cover-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #667eea;
+    font-size: 1.5rem;
+    background: #f8f9ff;
+}
+
+.search-result-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.search-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.search-result-title {
+    margin: 0;
+    color: #2d3748;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.search-result-source {
+    background: #667eea;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.search-result-source.google-books {
+    background: #4285f4;
+}
+
+.search-result-source.open-library {
+    background: #f4b400;
+}
+
+.search-result-source.books-com {
+    background: #00a652;
+}
+
+.search-result-source.kingstone {
+    background: #ff6b35;
+}
+
+.search-result-details {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin-bottom: 15px;
+}
+
+.search-result-details p {
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.search-result-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.search-result-actions .btn-sm {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+}
+
+.empty-state-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+/* 合併書籍樣式 */
+.book-card.merged {
+    border: 2px solid #667eea;
+    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+}
+
+.merged-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #667eea;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.book-card.merged:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* 手動搜尋選項樣式 */
+.manual-search-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.search-option {
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+}
+
+.search-option:hover {
+    border-color: #667eea;
+    background: #f1f5f9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.search-option h3 {
+    margin: 0 0 10px 0;
+    color: #2d3748;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-option p {
+    margin: 0 0 15px 0;
+    color: #4a5568;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.search-option .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* 使用提示樣式 */
+.search-tips {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.search-tips h4 {
+    margin: 0 0 15px 0;
+    color: #0369a1;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-tips ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #0c4a6e;
+}
+
+.search-tips li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+/* 書庫選擇按鈕樣式 */
+.search-source-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.search-source-buttons .btn {
+    padding: 15px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.search-source-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 書庫說明樣式 */
+.search-source-info {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.search-source-info h4 {
+    margin: 0 0 15px 0;
+    color: #2d3748;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.source-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.source-item {
+    padding: 15px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+.source-item strong {
+    display: block;
+    color: #2d3748;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.source-item p {
+    margin: 0;
+    color: #4a5568;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+/* 多選搜尋樣式 */
+.multi-search-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin: 20px 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.search-source-item {
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.search-source-item:hover {
+    border-color: #667eea;
+    background: #f1f5f9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.checkbox-container input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #cbd5e0;
+    border-radius: 4px;
+    background: white;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.3s ease;
+}
+
+.checkbox-container input[type="checkbox"]:checked + .checkmark {
+    background: #667eea;
+    border-color: #667eea;
+}
+
+.checkbox-container input[type="checkbox"]:checked + .checkmark::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.source-info {
+    flex: 1;
+}
+
+.source-info strong {
+    display: block;
+    color: #2d3748;
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.source-info p {
+    margin: 0;
+    color: #4a5568;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.search-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.search-actions .btn {
+    min-width: 120px;
 }
 
 /* 載入動畫 */
