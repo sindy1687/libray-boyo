@@ -101,6 +101,478 @@
             }
         }
 
+        /* 設定標籤頁樣式 */
+        .settings-tabs {
+            display: flex;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            color: #718096;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: #4a5568;
+            background: #f7fafc;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 使用者借閱管理樣式 */
+        .user-loan-management {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-header h3 {
+            color: #4a5568;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-section input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        .user-loan-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .user-loan-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+
+        .user-loan-info {
+            flex: 1;
+        }
+
+        .user-loan-username {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .user-loan-details {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .user-loan-days {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-right: 15px;
+        }
+
+        .user-loan-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .user-loan-actions .btn {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .empty-user-loan-list {
+            text-align: center;
+            color: #718096;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        /* 借閱者管理樣式 */
+        .borrowers-management {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .borrowers-stats {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .borrower-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .borrower-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+
+        .borrower-item.overdue {
+            border-color: #f56565;
+            background: #fff5f5;
+        }
+
+        .borrower-info {
+            flex: 1;
+        }
+
+        .borrower-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .borrower-details {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+
+        .borrower-books {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #4a5568;
+        }
+
+        .borrower-book-item {
+            padding: 4px 8px;
+            margin: 2px 0;
+            background: #f7fafc;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+        }
+
+        .borrower-book-item.overdue {
+            border-left-color: #f56565;
+            background: #fff5f5;
+        }
+
+        .borrower-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-right: 15px;
+            min-width: 80px;
+        }
+
+        .borrower-status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .borrower-status-badge.normal {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .borrower-status-badge.overdue {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .borrower-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .borrower-actions .btn {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .empty-borrowers-list {
+            text-align: center;
+            color: #718096;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        /* 身分審核管理樣式 */
+        .approval-management {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .approval-stats {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .application-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .application-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+
+        .application-item.urgent {
+            border-color: #f56565;
+            background: #fff5f5;
+        }
+
+        .application-info {
+            flex: 1;
+        }
+
+        .applicant-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .application-details {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+
+        .application-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-right: 15px;
+            min-width: 100px;
+        }
+
+        .application-status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .application-status-badge.pending {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .application-status-badge.approved {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .application-status-badge.rejected {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .application-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .application-actions .btn {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .empty-applications-list {
+            text-align: center;
+            color: #718096;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        .application-timeline {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #4a5568;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin: 3px 0;
+            padding: 2px 0;
+        }
+
+        .timeline-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #cbd5e0;
+        }
+
+        .timeline-dot.submitted {
+            background: #667eea;
+        }
+
+        .timeline-dot.reviewed {
+            background: #48bb78;
+        }
+
+        .timeline-dot.rejected {
+            background: #f56565;
+        }
+
+        /* 刪除身分管理樣式 */
+        .delete-identity-management {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .identity-stats {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .identity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .identity-item:hover {
+            border-color: #dc3545;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.1);
+        }
+
+        .identity-info {
+            flex: 1;
+        }
+
+        .identity-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .identity-details {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+
+        .identity-role {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .identity-role.student {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .identity-role.staff {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .identity-role.admin {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .identity-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .identity-actions .btn {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .identity-borrow-count {
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-right: 8px;
+        }
+
     </style>
 </head>
 <body>
@@ -123,6 +595,15 @@
                     <button id="search-btn" class="btn btn-primary">
                         <i class="fas fa-search"></i>
                     </button>
+                </div>
+                <div class="quick-borrow-row">
+                    <span class="quick-borrow-label"><i class="fas fa-barcode"></i> 快速借閱</span>
+                    <div class="quick-borrow-input">
+                        <input type="text" id="borrow-by-code-input" placeholder="輸入書碼（例：C0001）">
+                        <button id="borrow-by-code-btn" class="btn btn-warning">
+                            <i class="fas fa-book-reader"></i> 借閱
+                        </button>
+                    </div>
                 </div>
                 <div class="filter-section">
                     <select id="genre-filter">
@@ -165,6 +646,18 @@
                 <button id="location-map-btn" class="btn btn-info">
                     <i class="fas fa-map"></i> 位置圖
                 </button>
+                <button id="staff-approval-btn" class="btn btn-warning" style="display: none;">
+                    <i class="fas fa-user-check"></i> 身分審核
+                </button>
+                <button id="borrowers-list-btn" class="btn btn-warning" style="display: none;">
+                    <i class="fas fa-users"></i> 借閱者清單
+                </button>
+                <button id="borrowers-sync-btn" class="btn btn-success" style="display: none;">
+                    <i class="fas fa-cloud-upload-alt"></i> 借閱者上傳
+                </button>
+                <button id="delete-identity-btn" class="btn btn-danger" style="display: none;">
+                    <i class="fas fa-user-times"></i> 刪除身分
+                </button>
                 <button id="settings-btn" class="btn btn-info">
                     <i class="fas fa-cog"></i> 系統設定
                 </button>
@@ -185,7 +678,7 @@
                     <i class="fas fa-images"></i> 一鍵搜尋封面
                 </button>
                 <button id="reload-csv-btn" class="btn btn-secondary">
-                    <i class="fas fa-sync"></i> 重新載入 CSV
+                    <i class="fas fa-sync"></i> 重新載入資料
                 </button>
                 <button id="toggle-auto-update-btn" class="btn btn-success">
                     <i class="fas fa-sync-alt"></i> 自動更新
@@ -249,6 +742,10 @@
             <i class="fas fa-list"></i>
         </button>
 
+        <button id="admin-fab" class="admin-fab" type="button" aria-label="管理">
+            <i class="fas fa-sliders-h"></i>
+        </button>
+
         <!-- 借閱記錄 -->
         <div class="borrowed-section">
             <div class="borrowed-header" role="button" tabindex="0" aria-label="切換借閱記錄顯示">
@@ -261,9 +758,65 @@
                     <i class="fas fa-chevron-up"></i>
                 </button>
             </div>
+            
+            <!-- 借閱記錄搜尋和篩選 -->
+            <div class="borrowed-controls">
+                <div class="borrowed-search">
+                    <input type="text" id="borrowed-search-input" placeholder="搜尋書名、借閱者或書碼...">
+                    <button class="btn btn-secondary" onclick="library.searchBorrowedBooks()">
+                        <i class="fas fa-search"></i> 搜尋
+                    </button>
+                    <button class="btn btn-outline" onclick="library.clearBorrowedSearch()">
+                        <i class="fas fa-times"></i> 清除
+                    </button>
+                </div>
+                
+                <div class="borrowed-filters">
+                    <select id="borrowed-filter-status">
+                        <option value="all">全部狀態</option>
+                        <option value="borrowed">借閱中</option>
+                        <option value="returned">已歸還</option>
+                        <option value="overdue">逾期未還</option>
+                    </select>
+                    
+                    <select id="borrowed-sort">
+                        <option value="date-desc">借閱日期 (新到舊)</option>
+                        <option value="date-asc">借閱日期 (舊到新)</option>
+                        <option value="title">書名 (A-Z)</option>
+                        <option value="borrower">借閱者 (A-Z)</option>
+                        <option value="bookId">書碼</option>
+                    </select>
+                    
+                    <button class="btn btn-warning" onclick="library.showOverdueBooks()">
+                        <i class="fas fa-exclamation-triangle"></i> 逾期書籍
+                    </button>
+                    <button class="btn btn-info" onclick="library.showBorrowingStats()">
+                        <i class="fas fa-chart-bar"></i> 借閱統計
+                    </button>
+                </div>
+                
+                <div class="borrowed-stats-summary">
+                    <span id="borrowed-count-summary">總計: 0 本</span>
+                    <span id="overdue-count-summary" style="color: #dc3545; margin-left: 15px;">逾期: 0 本</span>
+                </div>
+            </div>
+            
             <div id="borrowed-container" class="borrowed-list">
                 <!-- 借閱記錄將在這裡動態生成 -->
             </div>
+        </div>
+    </div>
+
+    <div id="admin-actions-modal" class="modal actionsheet">
+        <div class="modal-content actionsheet-content">
+            <div class="actionsheet-handle" aria-hidden="true"></div>
+            <div class="actionsheet-header">
+                <div class="actionsheet-title">管理功能</div>
+                <button id="admin-actions-close" class="actionsheet-close" type="button" aria-label="關閉">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="admin-actions-list" class="actionsheet-list"></div>
         </div>
     </div>
 
@@ -272,21 +825,22 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>登入系統</h2>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="username">使用者名稱：</label>
-                    <input type="text" id="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="user-role">角色：</label>
-                    <select id="user-role" required>
-                        <option value="guest">訪客</option>
-                        <option value="student">學生</option>
-                        <option value="staff">老師/館員</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">登入</button>
-            </form>
+            
+            <!-- 簡單登入模式（預設） -->
+            <div id="simple-login-section">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">使用者名稱：</label>
+                        <input type="text" id="username" required>
+                        <small class="form-help">
+                            <i class="fas fa-info-circle"></i>
+                            請輸入您的使用者名稱，系統將自動識別您的身份
+                        </small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">登入</button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -391,11 +945,12 @@
                     <label for="edit-book-id">
                         <i class="fas fa-barcode"></i> 書碼：
                     </label>
-                    <input type="text" id="edit-book-id" disabled>
+                    <input type="text" id="edit-book-id" required oninput="library.checkBookCodeDuplicate(this.value)">
                     <small class="form-help">
                         <i class="fas fa-info-circle"></i>
-                        書碼與借閱紀錄關聯，為避免錯亂暫不提供修改。
+                        書碼格式：A/B/C + 數字（例：C0001）。修改書碼會更新所有相關借閱紀錄。
                     </small>
+                    <div id="edit-book-id-error" class="field-error" style="display: none;"></div>
                 </div>
                 <div class="form-group">
                     <label for="edit-book-title">
@@ -456,24 +1011,465 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>系統設定</h2>
-            <form id="settings-form">
-                <div class="form-group">
-                    <label for="loan-days">借閱天數：</label>
-                    <input type="number" id="loan-days" min="1" value="14">
+            
+            <!-- 設定標籤頁 -->
+            <div class="settings-tabs">
+                <button class="tab-btn active" onclick="library.switchSettingsTab('basic')">
+                    <i class="fas fa-cog"></i> 基本設定
+                </button>
+                <button class="tab-btn" onclick="library.switchSettingsTab('user-loan')">
+                    <i class="fas fa-user-clock"></i> 使用者借閱時間
+                </button>
+            </div>
+
+            <!-- 基本設定標籤頁 -->
+            <div id="basic-settings" class="tab-content active">
+                <form id="settings-form">
+                    <div class="form-group">
+                        <label for="loan-days">預設借閱天數：</label>
+                        <input type="number" id="loan-days" min="1" value="14">
+                        <small class="form-help">
+                            <i class="fas fa-info-circle"></i>
+                            新使用者的預設借閱天數
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label for="guest-borrow">訪客可借閱：</label>
+                        <input type="checkbox" id="guest-borrow">
+                    </div>
+                    <div class="form-group">
+                        <label for="default-copies">預設冊數：</label>
+                        <input type="number" id="default-copies" min="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="default-year">預設年份：</label>
+                        <input type="number" id="default-year" min="1900" max="2030" value="2024">
+                    </div>
+                    <button type="submit" class="btn btn-primary">儲存設定</button>
+                </form>
+            </div>
+
+            <!-- 使用者借閱時間標籤頁 -->
+            <div id="user-loan-settings" class="tab-content">
+                <div class="user-loan-management">
+                    <div class="section-header">
+                        <h3><i class="fas fa-user-clock"></i> 使用者借閱時間設定</h3>
+                        <button class="btn btn-primary" onclick="library.showAddUserLoanModal()">
+                            <i class="fas fa-plus"></i> 新增使用者設定
+                        </button>
+                    </div>
+                    
+                    <div class="search-section">
+                        <input type="text" id="user-loan-search" placeholder="搜尋使用者名稱...">
+                        <button class="btn btn-secondary" onclick="library.searchUserLoanSettings()">
+                            <i class="fas fa-search"></i> 搜尋
+                        </button>
+                    </div>
+
+                    <div id="user-loan-list">
+                        <!-- 使用者借閱設定列表將在這裡動態生成 -->
+                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 使用者借閱設定模態框 -->
+    <div id="user-loan-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-user-clock"></i> 設定使用者借閱時間</h2>
+            <form id="user-loan-form">
+                <input type="hidden" id="user-loan-editing-index">
+                
                 <div class="form-group">
-                    <label for="guest-borrow">訪客可借閱：</label>
-                    <input type="checkbox" id="guest-borrow">
+                    <label for="user-loan-username">
+                        <i class="fas fa-user"></i> 使用者名稱：
+                    </label>
+                    <input type="text" id="user-loan-username" placeholder="輸入使用者名稱" required>
+                    <small class="form-help">
+                        <i class="fas fa-info-circle"></i>
+                        請輸入要設定借閱時間的使用者名稱
+                    </small>
                 </div>
+                
                 <div class="form-group">
-                    <label for="default-copies">預設冊數：</label>
-                    <input type="number" id="default-copies" min="1" value="1">
+                    <label for="user-loan-days">
+                        <i class="fas fa-calendar-days"></i> 借閱天數：
+                    </label>
+                    <input type="number" id="user-loan-days" min="1" max="365" required>
+                    <small class="form-help">
+                        <i class="fas fa-info-circle"></i>
+                        此使用者每次借閱的可借天數（1-365天）
+                    </small>
                 </div>
+
                 <div class="form-group">
-                    <label for="default-year">預設年份：</label>
-                    <input type="number" id="default-year" min="1900" max="2030" value="2024">
+                    <label for="user-loan-reason">
+                        <i class="fas fa-comment"></i> 設定原因：
+                    </label>
+                    <textarea id="user-loan-reason" rows="3" placeholder="可選：說明設定此借閱時間的原因"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">儲存設定</button>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="this.closest('.modal').style.display='none'">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                    <button type="button" id="delete-user-loan-btn" class="btn btn-danger" style="display: none;">
+                        <i class="fas fa-trash"></i> 刪除設定
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 儲存設定
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 修改應還日期模態框 -->
+    <div id="edit-due-date-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-calendar-edit"></i> 修改應還日期</h2>
+            <form id="edit-due-date-form">
+                <input type="hidden" id="edit-due-date-borrow-id">
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-book"></i> 書籍資訊：
+                    </label>
+                    <div id="edit-due-date-book-info" style="padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
+                        <!-- 書籍資訊將在這裡動態生成 -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-borrow-date">
+                        <i class="fas fa-calendar-plus"></i> 新的借閱日期：
+                    </label>
+                    <input type="date" id="edit-borrow-date" required>
+                    <small class="form-help">
+                        <i class="fas fa-info-circle"></i>
+                        請選擇新的借閱日期
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-due-date">
+                        <i class="fas fa-calendar-check"></i> 新的應還日期：
+                    </label>
+                    <input type="date" id="edit-due-date" required>
+                    <small class="form-help">
+                        <i class="fas fa-info-circle"></i>
+                        請選擇新的應還日期
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-due-date-reason">
+                        <i class="fas fa-comment"></i> 修改原因：
+                    </label>
+                    <textarea id="edit-due-date-reason" rows="3" placeholder="請說明修改應還日期的原因"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="this.closest('.modal').style.display='none'">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 儲存修改
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 選擇借閱書碼模態框 -->
+    <div id="choose-copy-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-list-check"></i> 選擇要借的書碼</h2>
+            <input type="hidden" id="choose-copy-selected">
+
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-book"></i> 書籍資訊：
+                </label>
+                <div id="choose-copy-book-info" style="padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;"></div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-barcode"></i> 可借書碼：
+                </label>
+                <div id="choose-copy-list" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" id="choose-copy-cancel" class="btn btn-outline">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+                <button type="button" id="choose-copy-confirm" class="btn btn-primary">
+                    <i class="fas fa-check"></i> 確認借閱
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 借閱者清單模態框 -->
+    <div id="borrowers-list-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-users"></i> 借閱者清單</h2>
+            
+            <div class="borrowers-management">
+                <div class="section-header">
+                    <h3><i class="fas fa-user-friends"></i> 目前借閱者</h3>
+                    <div class="borrowers-stats">
+                        <span id="total-borrowers-count">0 位借閱者</span>
+                    </div>
+                </div>
+                
+                <div class="search-section">
+                    <input type="text" id="borrowers-search" placeholder="搜尋借閱者姓名或電話...">
+                    <button class="btn btn-secondary" onclick="library.searchBorrowers()">
+                        <i class="fas fa-search"></i> 搜尋
+                    </button>
+                    <button class="btn btn-warning" onclick="library.showOverdueBorrowers()">
+                        <i class="fas fa-exclamation-triangle"></i> 逾期借閱者
+                    </button>
+                </div>
+
+                <div id="borrowers-list">
+                    <!-- 借閱者列表將在這裡動態生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 逾期通知模態框 -->
+    <div id="overdue-notification-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-bell"></i> 逾期通知</h2>
+            <form id="overdue-notification-form">
+                <input type="hidden" id="notification-borrower-id">
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-user"></i> 借閱者資訊：
+                    </label>
+                    <div id="notification-borrower-info" style="padding: 10px; background: #fff3cd; border-radius: 6px; margin-bottom: 15px;">
+                        <!-- 借閱者資訊將在這裡動態生成 -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notification-method">
+                        <i class="fas fa-paper-plane"></i> 通知方式：
+                    </label>
+                    <select id="notification-method" required>
+                        <option value="phone">電話通知</option>
+                        <option value="sms">簡訊通知</option>
+                        <option value="email">電子郵件通知</option>
+                        <option value="in-person">當面通知</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="notification-message">
+                        <i class="fas fa-comment"></i> 通知內容：
+                    </label>
+                    <textarea id="notification-message" rows="4" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="notification-status">
+                        <i class="fas fa-check-circle"></i> 通知狀態：
+                    </label>
+                    <select id="notification-status" required>
+                        <option value="pending">待通知</option>
+                        <option value="notified">已通知</option>
+                        <option value="resolved">已處理</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="this.closest('.modal').style.display='none'">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 儲存通知記錄
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 身分審核管理模態框 -->
+    <div id="staff-approval-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-user-check"></i> 身分審核管理</h2>
+            
+            <div class="approval-management">
+                <div class="section-header">
+                    <h3><i class="fas fa-clock"></i> 待審核申請</h3>
+                    <div class="approval-stats">
+                        <span id="pending-approval-count">0 筆待審核</span>
+                    </div>
+                </div>
+                
+                <div class="search-section">
+                    <input type="text" id="approval-search" placeholder="搜尋申請人姓名或電話...">
+                    <button class="btn btn-secondary" onclick="library.searchApplications()">
+                        <i class="fas fa-search"></i> 搜尋
+                    </button>
+                    <button class="btn btn-success" onclick="library.syncApplicationsToGoogle()">
+                        <i class="fas fa-cloud-upload-alt"></i> 同步到 Google Sheets
+                    </button>
+                </div>
+
+                <div id="applications-list">
+                    <!-- 申請列表將在這裡動態生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 審核詳情模態框 -->
+    <div id="approval-detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-user-edit"></i> 審核申請</h2>
+            <form id="approval-form">
+                <input type="hidden" id="approval-application-id">
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-user"></i> 申請人資訊：
+                    </label>
+                    <div id="approval-applicant-info" style="padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
+                        <!-- 申請人資訊將在這裡動態生成 -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="approval-decision">
+                        <i class="fas fa-gavel"></i> 審核決定：
+                    </label>
+                    <select id="approval-decision" required>
+                        <option value="">請選擇審核結果</option>
+                        <option value="approved">通過</option>
+                        <option value="rejected">拒絕</option>
+                        <option value="pending">保留待審</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="approval-reason">
+                        <i class="fas fa-comment"></i> 審核意見：
+                    </label>
+                    <textarea id="approval-reason" rows="4" placeholder="請輸入審核意見或原因..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="approval-note">
+                        <i class="fas fa-sticky-note"></i> 備註：
+                    </label>
+                    <textarea id="approval-note" rows="2" placeholder="其他備註資訊..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="this.closest('.modal').style.display='none'">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 儲存審核結果
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 刪除身分模態框 -->
+    <div id="delete-identity-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-user-times"></i> 刪除身分</h2>
+            
+            <div class="delete-identity-management">
+                <div class="section-header">
+                    <h3><i class="fas fa-users"></i> 使用者列表</h3>
+                    <div class="identity-stats">
+                        <span id="total-users-count">0 位使用者</span>
+                    </div>
+                </div>
+                
+                <div class="search-section">
+                    <input type="text" id="identity-search" placeholder="搜尋使用者姓名或帳號...">
+                    <button class="btn btn-secondary" onclick="library.searchIdentities()">
+                        <i class="fas fa-search"></i> 搜尋
+                    </button>
+                    <button class="btn btn-warning" onclick="library.refreshIdentityList()">
+                        <i class="fas fa-sync"></i> 重新整理
+                    </button>
+                </div>
+
+                <div id="identity-list">
+                    <!-- 使用者列表將在這裡動態生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 確認刪除模態框 -->
+    <div id="confirm-delete-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-exclamation-triangle"></i> 確認刪除</h2>
+            
+            <form id="confirm-delete-form">
+                <input type="hidden" id="delete-username">
+                
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-user"></i> 使用者資訊：
+                    </label>
+                    <div id="delete-user-info" style="padding: 10px; background: #fee2e2; border-radius: 6px; margin-bottom: 15px;">
+                        <!-- 使用者資訊將在這裡動態生成 -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="delete-reason">
+                        <i class="fas fa-comment"></i> 刪除原因：
+                    </label>
+                    <textarea id="delete-reason" rows="3" placeholder="請輸入刪除原因..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-exclamation-triangle"></i> 刪除後果：
+                    </label>
+                    <div style="padding: 10px; background: #fef3c7; border-radius: 6px; margin-bottom: 15px;">
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>使用者帳號將被永久刪除</li>
+                            <li>相關的借閱記錄將被保留但無法歸還</li>
+                            <li>身分申請記錄將被刪除</li>
+                            <li>使用者將無法再登入系統</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="this.closest('.modal').style.display='none'">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> 確認刪除
+                    </button>
+                </div>
             </form>
         </div>
     </div>

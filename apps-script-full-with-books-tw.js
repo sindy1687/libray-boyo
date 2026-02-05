@@ -17,6 +17,20 @@ function doPost(e) {
       return json_({ ok: true });
     }
 
+    if (action === 'pushBorrowedBooks') {
+      const payload = req.payload || {};
+      const borrowedBooks = Array.isArray(payload.borrowedBooks) ? payload.borrowedBooks : [];
+      const userId = payload.userId || 'anonymous';
+
+      // 只更新借閱記錄，不更新書籍資料
+      writeBorrowed_(borrowedBooks);
+      
+      // 可以在這裡記錄是哪個使用者更新的借閱記錄
+      console.log('Borrowed books updated by user: ' + userId);
+
+      return json_({ ok: true });
+    }
+
     if (action === 'pull') {
       const data = {
         books: readBooks_(),
